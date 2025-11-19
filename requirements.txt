@@ -1,0 +1,7 @@
+uvicorn
+fastapi[standard]
+requests
+python-dotenv
+pydantic
+python-jose[cryptography] # jwt
+passlib[bcrypt]           # jwt
