@@ -111,10 +111,8 @@ Pour vérifier que l'API fonctionne correctement, vous pouvez utiliser [Postman]
 
 Cet endpoint permet à un utilisateur de s'authentifier et de recevoir un jeton JWT en retour.
 
-**Résultat attendu :**
-
-*   **Réponse réussie :**
-    ![Réponse réussie de /login avec un token JWT](/images/Postman_test_login.png.png)
+   **Réponse réussie :**
+![Réponse réussie de /login avec un token JWT](/images/Postman_test_login.png)
 
  **Important : Copiez la valeur du `token` reçu.**
 
@@ -122,11 +120,8 @@ Cet endpoint permet à un utilisateur de s'authentifier et de recevoir un jeton 
 
 ### 2. Tester l'Endpoint (`/predict`)
 
-
-**Résultat attendu :**
-
-*   **Réponse réussie de l'endpoint :**
-    ![Réponse réussie de /predict avec le sentiment et le score](/images/Postman_test_predict.png.png)
+**Réponse réussie de l'endpoint :**
+![Réponse réussie de /predict avec le sentiment et le score](/images/Postman_test_predict.png)
 
 ---
 
