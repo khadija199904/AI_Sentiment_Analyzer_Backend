@@ -56,7 +56,7 @@ Ce répertoire contient le code source de l'API backend. Il s'agit d'une micro-A
 
 ## Lancement du Serveur
 
-Une fois l'installation et la configuration terminées, vous pouvez lancer le serveur de développement avec Uvicorn.
+Une fois l'installation et la configuration terminées, vous pouvez lancer le serveur de développement avec uvicorn.
 
 ```bash
 uvicorn api_app.main:app --reload
