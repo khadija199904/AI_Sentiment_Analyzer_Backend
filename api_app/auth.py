@@ -19,7 +19,7 @@ fake_user = {
 
  
 def create_token(login : User):
-   if login.username == fake_user["username"] and login.pwd == fake_user["password"] :
+   if login.username == fake_user["username"] and login.password == fake_user["password"] :
          usrtoken = jwt.encode({},key=SECRET_KEY,algorithm=ALGORITHM)
          return usrtoken
 

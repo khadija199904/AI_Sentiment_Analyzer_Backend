@@ -1,4 +1,4 @@
-from fastapi import FastAPI,HTTPException ,Depends,Header
+from fastapi import FastAPI,HTTPException ,Depends,Header,Form
 from api_app.schema import SentimentResponse,   TextInput , User
 import requests
 import os
@@ -6,33 +6,34 @@ from dotenv import load_dotenv
 from api_app.haggingface_client import analyse_sentiment
 from jose import jwt
 from api_app.auth import create_token,verify_token
-
-load_dotenv()
-
-
-HF_API_TOKEN = os.getenv('HUGGINGFACE_API_TOKEN')
+from fastapi.middleware.cors import CORSMiddleware
 
 
-# Configuration de JWT
-SECRET_KEY = os.getenv("SECRET_KEY")
-ALGORITHM = "HS256"
-
-
-fake_user = {
-    
-        "username": "khadija",
-        "password": "Elabbioui99"
-    
-}
 
 app = FastAPI (title="Bienvenue à l'API d'analyse de sentiment",description="Une API simple pour analyser le sentiment de texte en utilisant Hugging Face Inference API.")
 
+
+# --- Configuration CORS pour autoriser le frontend ---
+origins = [
+    "http://localhost:3000",  
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],  # Autorise toutes les méthodes (GET, POST, etc.)
+    allow_headers=["*"],  # Autorise tous les en-têtes
+)
+
+
+
+# Fonction pour extraire le nombre d'étoiles
 def get_star(label):
     for i in range(1,6):
         if f"{i} star" in label :
           
           return i 
-        
+# Fonction pour extraire le sentiment 
 def get_sentiment(label):
     
     rate = get_star(label)
@@ -43,38 +44,19 @@ def get_sentiment(label):
     elif rate in [4,5]:
          return "positif"
     return "inconnu"
-# def get_sentiment(label):
-    # if '1 star' in label or '2 stars' in label:
-    #     return "negatif"
-    # if '3 stars' in label:
-    #     return "neutre"
-    # if '4 stars' in label or '5 stars' in label:
-    #     return "positif"
-    # return "indeterminé" 
 
 
 
-
-# Endp
+# Endpoint login
 
 @app.post("/login") 
-def verify_info_login(login : User) :
+async def login(user_login : User):
     
-     usertoken = create_token(login) 
+     usertoken = create_token(user_login) 
      if usertoken is not None :
-         return usertoken
+         return {"access_token" :usertoken}
      else :
          return { "message" : "Access Failed "}
-
-    
-
-# @app.get('/verify') 
-# def verify_token(token : str = Header()):
-#   try:
-#       token_decoded = jwt.decode(token=token,key=SECRET_KEY,algorithms=[ALGORITHM])
-#       return token_decoded
-#   except :
-#       raise HTTPException(status_code=401,detail='Token Invalide azin')
 
 
 # Endpoint Post /predict Protected with JWT
@@ -86,7 +68,7 @@ async def predict_sentiment(request: TextInput, new_user : str = Depends(verify_
     
     response = analyse_sentiment(text)
     if not isinstance(response, list):
-      return response        # renvoie l’erreur HF directement
+      return response       
    
 
     top_prediction = response[0][0] 
@@ -98,7 +80,6 @@ async def predict_sentiment(request: TextInput, new_user : str = Depends(verify_
     semntiment  = get_sentiment(label)
     
     return SentimentResponse (
-            text=request.text,
             sentiment=semntiment,
             score=score
         )
@@ -113,7 +94,7 @@ async def predict_sentiment(request: TextInput):
     
     response = analyse_sentiment(text)
     if not isinstance(response, list):
-      return response        # renvoie l’erreur HF directement
+      return response        
    
 
     top_prediction = response[0][0] 
@@ -125,7 +106,6 @@ async def predict_sentiment(request: TextInput):
     semntiment  = get_sentiment(label)
     
     return  SentimentResponse (
-            text=request.text,
             sentiment=semntiment,
             score=score
         )
